@@ -1,14 +1,10 @@
 param(
 	[Parameter(Mandatory=$false)][string]$StorageAccountName = "nugetgallerydev",
     [Parameter(Mandatory=$false)][string]$StorageConnectionString,
-	[Parameter(Mandatory=$false)][string]$PackageFile = $null,
     [Parameter(Mandatory=$false)][string]$AzureSdkPath = $null,
+	[Parameter(Mandatory=$false)][string]$PackageFile = $null,
     [Parameter(Mandatory=$false)][switch]$TeamCity
-)
-
-if($TeamCity) {
-  $ErrorActionPreference = "Stop"
-}
+    )
 
 # Import common stuff
 $ScriptRoot = (Split-Path -parent $MyInvocation.MyCommand.Definition)
@@ -34,6 +30,10 @@ $AzureSdkPath = Get-AzureSdkPath $AzureSdkPath
 [System.Reflection.Assembly]::LoadFrom("$AzureSdkPath\bin\Microsoft.WindowsAzure.StorageClient.dll") | Out-Null
 
 if(!$StorageConnectionString) {
+    if($TeamCity) {
+        Write-Host "CI Build requires Connection String to upload package. Skipping upload"
+        exit 0;
+    }
     $StorageConnectionString = Get-StorageAccountConnectionString $StorageAccountName
 }
 $Account = [Microsoft.WindowsAzure.CloudStorageAccount]::Parse($StorageConnectionString)
