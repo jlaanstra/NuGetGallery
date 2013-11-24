@@ -5,6 +5,7 @@ _AzurePackage
 *.bak
 _PackagedWebsite
 Packages.dgml
+DO-NOT-COMMIT.txt
 
 # https://raw.github.com/github/gitignore/master/VisualStudio.gitignore
 ## Ignore Visual Studio temporary files, build results, and
