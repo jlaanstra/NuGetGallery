@@ -359,6 +359,11 @@
     <Compile Include="Areas\Admin\Models\LuceneInfoModel.cs" />
     <Compile Include="Areas\Admin\Controllers\ConfigController.cs" />
     <Compile Include="Areas\Admin\ViewModels\ConfigViewModel.cs" />
+    <Compile Include="Authentication\AuthorizeMiddleware.cs" />
+    <Compile Include="Authentication\ForceSslAlwaysMiddleware.cs" />
+    <Compile Include="Authentication\Providers\Basic\BasicAuthenticationExtensions.cs" />
+    <Compile Include="Authentication\Providers\Basic\BasicAuthenticationHandler.cs" />
+    <Compile Include="Authentication\Providers\Basic\BasicAuthenticationMiddleware.cs" />
     <Compile Include="Authentication\Providers\ApiKey\ApiKeyAuthenticationExtensions.cs" />
     <Compile Include="Authentication\Providers\ApiKey\ApiKeyAuthenticationHandler.cs" />
     <Compile Include="Authentication\Providers\ApiKey\ApiKeyAuthenticationMiddleware.cs" />
@@ -374,6 +379,7 @@
     <Compile Include="Authentication\Providers\Authenticator.cs" />
     <Compile Include="Authentication\Providers\AuthenticatorConfiguration.cs" />
     <Compile Include="Authentication\Providers\AuthenticatorUI.cs" />
+    <Compile Include="Authentication\Providers\Basic\BasicAuthenticationOptions.cs" />
     <Compile Include="Authentication\Providers\LocalUser\LocalUserAuthenticator.cs" />
     <Compile Include="Authentication\Providers\MicrosoftAccount\MicrosoftAccountAuthenticator.cs" />
     <Compile Include="Authentication\Providers\MicrosoftAccount\MicrosoftAccountAuthenticatorConfiguration.cs" />

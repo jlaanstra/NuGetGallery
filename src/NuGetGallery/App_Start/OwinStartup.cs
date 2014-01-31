@@ -14,6 +14,7 @@ using NuGetGallery.Configuration;
 using System.Security.Claims;
 using NuGetGallery.Authentication.Providers;
 using NuGetGallery.Authentication.Providers.Cookie;
+using NuGetGallery.Authentication.Providers.Basic;
 
 [assembly: OwinStartup(typeof(NuGetGallery.OwinStartup))]
 
@@ -27,7 +28,7 @@ namespace NuGetGallery
             // Get config
             var config = Container.Kernel.Get<ConfigurationService>();
             var auth = Container.Kernel.Get<AuthenticationService>();
-            
+
             // Configure logging
             app.SetLoggerFactory(new DiagnosticsLoggerFactory());
 
@@ -35,39 +36,51 @@ namespace NuGetGallery
             {
                 // Put a middleware at the top of the stack to force the user over to SSL
                 // if authenticated.
-                app.UseForceSslWhenAuthenticated(config.Current.SSLPort);
+                //app.UseForceSslWhenAuthenticated(config.Current.SSLPort);
+
+                // Put a middleware at the top of the stack to force the user over to SSL always
+                app.UseForceSslAlways(config.Current.SSLPort);
             }
 
-            // Get the local user auth provider, if present and attach it first
-            Authenticator localUserAuther;
-            if (auth.Authenticators.TryGetValue(Authenticator.GetName(typeof(LocalUserAuthenticator)), out localUserAuther))
+            app.UseBasicAuthentication(new BasicAuthenticationOptions()
             {
-                // Configure cookie auth now
-                localUserAuther.Startup(config, app);
-            }
-
-            // Attach external sign-in cookie middleware
-            app.SetDefaultSignInAsAuthenticationType(AuthenticationTypes.External);
-            app.UseCookieAuthentication(new CookieAuthenticationOptions()
-            {
-                AuthenticationType = AuthenticationTypes.External,
-                AuthenticationMode = AuthenticationMode.Passive,
-                CookieName = ".AspNet." + AuthenticationTypes.External,
-                ExpireTimeSpan = TimeSpan.FromMinutes(5)
+                AuthenticationMode = AuthenticationMode.Active,
+                AuthenticationService = auth,
+                AuthenticationType = AuthenticationTypes.LocalUser,
             });
 
-            // Attach non-cookie auth providers
-            var nonCookieAuthers = auth
-                .Authenticators
-                .Where(p => !String.Equals(
-                    p.Key,
-                    Authenticator.GetName(typeof(LocalUserAuthenticator)),
-                    StringComparison.OrdinalIgnoreCase))
-                .Select(p => p.Value);
-            foreach (var auther in nonCookieAuthers)
-            {
-                auther.Startup(config, app);
-            }
+            //// Get the local user auth provider, if present and attach it first
+            //Authenticator localUserAuther;
+            //if (auth.Authenticators.TryGetValue(Authenticator.GetName(typeof(LocalUserAuthenticator)), out localUserAuther))
+            //{
+            //    // Configure cookie auth now
+            //    localUserAuther.Startup(config, app);
+            //}
+
+            app.Authorize();
+
+            //// Attach external sign-in cookie middleware
+            //app.SetDefaultSignInAsAuthenticationType(AuthenticationTypes.External);
+            //app.UseCookieAuthentication(new CookieAuthenticationOptions()
+            //{
+            //    AuthenticationType = AuthenticationTypes.External,
+            //    AuthenticationMode = AuthenticationMode.Passive,
+            //    CookieName = ".AspNet." + AuthenticationTypes.External,
+            //    ExpireTimeSpan = TimeSpan.FromMinutes(5)
+            //});
+
+            //// Attach non-cookie auth providers
+            //var nonCookieAuthers = auth
+            //    .Authenticators
+            //    .Where(p => !String.Equals(
+            //        p.Key,
+            //        Authenticator.GetName(typeof(LocalUserAuthenticator)),
+            //        StringComparison.OrdinalIgnoreCase))
+            //    .Select(p => p.Value);
+            //foreach (var auther in nonCookieAuthers)
+            //{
+            //    auther.Startup(config, app);
+            //}
         }
     }
 }
