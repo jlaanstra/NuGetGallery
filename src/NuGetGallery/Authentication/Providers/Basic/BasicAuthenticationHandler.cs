@@ -18,27 +18,25 @@ namespace NuGetGallery.Authentication.Providers.Basic
     {
         private readonly ILogger logger;
 
-        public BasicAuthenticationHandler(ILogger logger)
+        protected AuthenticationService Auth { get; set; }
+
+        public BasicAuthenticationHandler(ILogger logger, AuthenticationService auth)
         {
             this.logger = logger;
+            this.Auth = auth;
         }
 
-        protected override Task ApplyResponseChallengeAsync()
+        protected override async Task ApplyResponseChallengeAsync()
         {
             logger.WriteVerbose("ApplyResponseChallenge");
-            if (Response.StatusCode != 401)
+            if (Response.StatusCode == 401 && (Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode) != null))
             {
-                return Task.FromResult<object>(null);
+                Response.Headers.Append("WWW-Authenticate", "Basic realm=Methylium NuGet");
             }
-
-            AuthenticationResponseChallenge challenge = Helper.LookupChallenge(Options.AuthenticationType, Options.AuthenticationMode);
-
-            if (challenge != null)
+            else
             {
-                Response.Headers.Set("WWW-Authenticate", "Basic realm=Methylium NuGet");
+                await base.ApplyResponseChallengeAsync();
             }
-
-            return Task.FromResult<object>(null);
         }
         protected override async Task<AuthenticationTicket> AuthenticateCoreAsync()
         {
@@ -56,7 +54,7 @@ namespace NuGetGallery.Authentication.Providers.Basic
                     var parts = parameter.Split(':');
                     if (parts.Length == 2)
                     {
-                        var user = await Options.AuthenticationService.Authenticate(parts[0], parts[1]);
+                        var user = await Auth.Authenticate(parts[0], parts[1]);
                         if(user == null)
                         {
                             return null;

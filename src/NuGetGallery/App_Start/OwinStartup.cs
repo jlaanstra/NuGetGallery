@@ -45,9 +45,9 @@ namespace NuGetGallery
             app.UseBasicAuthentication(new BasicAuthenticationOptions()
             {
                 AuthenticationMode = AuthenticationMode.Active,
-                AuthenticationService = auth,
                 AuthenticationType = AuthenticationTypes.LocalUser,
             });
+            app.SetDefaultSignInAsAuthenticationType(AuthenticationTypes.LocalUser);
 
             app.Authorize();
 

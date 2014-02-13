@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Mvc;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
 using Microsoft.Owin.Security.Infrastructure;
@@ -22,7 +23,7 @@ namespace NuGetGallery.Authentication.Providers.Basic
 
         protected override AuthenticationHandler<BasicAuthenticationOptions> CreateHandler()
         {
-            return new BasicAuthenticationHandler(this.logger);
+            return new BasicAuthenticationHandler(this.logger, DependencyResolver.Current.GetService<AuthenticationService>());
         }
     }
 }

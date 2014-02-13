@@ -9,8 +9,6 @@ namespace NuGetGallery.Authentication.Providers.Basic
     public class BasicAuthenticationOptions : AuthenticationOptions
     {
         public BasicAuthenticationOptions()
-            : base("Basic") { }
-
-        public AuthenticationService AuthenticationService { get; set; }
+            : base(AuthenticationTypes.LocalUser) { }
     }
 }
