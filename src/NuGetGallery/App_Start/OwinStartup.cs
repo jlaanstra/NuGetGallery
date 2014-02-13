@@ -49,6 +49,8 @@ namespace NuGetGallery
                 AuthenticationType = AuthenticationTypes.LocalUser,
             });
 
+            app.Authorize();
+
             //// Get the local user auth provider, if present and attach it first
             //Authenticator localUserAuther;
             //if (auth.Authenticators.TryGetValue(Authenticator.GetName(typeof(LocalUserAuthenticator)), out localUserAuther))
@@ -56,8 +58,6 @@ namespace NuGetGallery
             //    // Configure cookie auth now
             //    localUserAuther.Startup(config, app);
             //}
-
-            app.Authorize();
 
             //// Attach external sign-in cookie middleware
             //app.SetDefaultSignInAsAuthenticationType(AuthenticationTypes.External);

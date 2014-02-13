@@ -43,9 +43,7 @@ namespace NuGetGallery.Authentication.Providers.Basic
         protected override async Task<AuthenticationTicket> AuthenticateCoreAsync()
         {
             logger.WriteVerbose("AuthenticateCore");
-
-            AuthenticationProperties properties = null;
-
+            
             var header = Request.Headers["Authorization"];
 
             if (!String.IsNullOrWhiteSpace(header))
@@ -59,8 +57,13 @@ namespace NuGetGallery.Authentication.Providers.Basic
                     if (parts.Length == 2)
                     {
                         var user = await Options.AuthenticationService.Authenticate(parts[0], parts[1]);
+                        if(user == null)
+                        {
+                            return null;
+                        }
+                        Context.Set(Constants.CurrentUserOwinEnvironmentKey, user);
                         var identity = AuthenticationService.CreateIdentity(user.User, AuthenticationTypes.LocalUser);
-                        return new AuthenticationTicket(identity, properties);
+                        return new AuthenticationTicket(identity, new AuthenticationProperties());
                     }
                 }
             }
