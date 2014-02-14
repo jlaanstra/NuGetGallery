@@ -49,7 +49,10 @@ namespace NuGetGallery
             });
             app.SetDefaultSignInAsAuthenticationType(AuthenticationTypes.LocalUser);
 
-            app.Authorize();
+            if (config.Current.ForceAuth)
+            {
+                app.Authorize();
+            }
 
             //// Get the local user auth provider, if present and attach it first
             //Authenticator localUserAuther;

@@ -93,5 +93,7 @@ namespace NuGetGallery.Configuration
         /// Gets the Google Analytics Property ID being used, if any.
         /// </summary>
         string GoogleAnalyticsPropertyId { get; set; }
+
+        bool ForceAuth { get; set; }
     }
 }
