@@ -51,7 +51,7 @@ namespace NuGetGallery.Authentication.Providers.Basic
                 if ("Basic".Equals(authHeader.Scheme, StringComparison.OrdinalIgnoreCase))
                 {
                     string parameter = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader.Parameter));
-                    var parts = parameter.Split(':');
+                    var parts = parameter.Split(new char[] { ':' }, 2);
                     if (parts.Length == 2)
                     {
                         var user = await Auth.Authenticate(parts[0], parts[1]);
